@@ -1,4 +1,5 @@
 import { Button, Grid, TextInput } from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 
 export default function Eduction({ form, removeEducation, index }) {
 	return (
@@ -38,7 +39,7 @@ export default function Eduction({ form, removeEducation, index }) {
 			{index !== 0 && (
 				<Grid.Col span={1}>
 					<Button mt={24} bg="red" onClick={() => removeEducation(index)}>
-						Del
+						<IconTrash />
 					</Button>
 				</Grid.Col>
 			)}

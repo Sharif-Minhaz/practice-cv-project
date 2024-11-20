@@ -1,3 +1,5 @@
+import { useLocalStorage } from "@mantine/hooks";
+import superjson from "superjson";
 import { Button, Group, TextInput, Grid, Stack, Box, Divider, Flex, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import ImageDropzone from "./ImageDropzone";
@@ -5,26 +7,46 @@ import { IMaskInput } from "react-imask";
 import RichTextEditorComponent from "./RichTextEditorComponent";
 import Eduction from "./Eduction";
 import ProfessionalExperience from "./ProfessionalExperience";
+import { IconPlus } from "@tabler/icons-react";
+import PreviewModal from "./PreviewModal";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCvValue, addDataToStore } from "../features/cv/cvSlice";
 
 export default function CVForm() {
+	const cvValue = useSelector(selectCvValue);
+	const dispatch = useDispatch();
+
+	const initialValues = {
+		profileImage: cvValue?.profileImage || null,
+		fname: cvValue?.fname || "",
+		designation: cvValue?.designation || "",
+		email: cvValue?.email || "minhaz.rbs@gmail.com",
+		mobile: cvValue?.mobile || "",
+		github: cvValue?.github || "https://github.com/Sharif-Minhaz",
+		linkedIn: cvValue?.linkedIn || "https://www.linkedin.com/in/minhaz-sharif-614724205",
+		website: cvValue?.website || "https://github.com/Sharif-Minhaz",
+		summary: cvValue?.summary || "",
+		education: cvValue?.education?.[0]?.orgName
+			? cvValue?.education
+			: [{ orgName: "", duration: "", title: "", grade: 0 }],
+		technicalSkills: cvValue?.technicalSkills || "",
+		professionalExp: cvValue?.professionalExp?.[0]?.orgName
+			? cvValue?.professionalExp
+			: [{ orgName: "", duration: "", designation: "", role: "" }],
+		portfolio: cvValue?.portfolio || "",
+		languages: cvValue?.languages || "",
+	};
+
+	const [value, setValue] = useLocalStorage({
+		key: "cv",
+		defaultValue: "{}",
+		serialize: superjson.stringify,
+		deserialize: (str) => (str === undefined ? "{}" : superjson.parse(str)),
+	});
+
 	const form = useForm({
 		mode: "uncontrolled",
-		initialValues: {
-			profileImage: "",
-			fname: "",
-			designation: "",
-			email: "minhaz.rbs@gmail.com",
-			mobile: "",
-			github: "https://github.com/Sharif-Minhaz",
-			linkedIn: "https://www.linkedin.com/in/minhaz-sharif-614724205",
-			website: "https://github.com/Sharif-Minhaz",
-			summary: "",
-			education: [{ orgName: "", duration: "", title: "", grade: 0 }],
-			technicalSkills: "",
-			professionalExp: [{ orgName: "", duration: "", designation: "", role: "" }],
-			portfolio: "",
-			languages: "",
-		},
+		initialValues,
 
 		validate: {
 			fname: (value) => (value.trim().length > 0 ? null : "First name is required"),
@@ -96,7 +118,8 @@ export default function CVForm() {
 
 	// global form submission handler
 	const handleSubmit = (values) => {
-		console.log(values);
+		dispatch(addDataToStore(values));
+		setValue(values);
 	};
 
 	// handle summary rich text editor
@@ -220,7 +243,9 @@ export default function CVForm() {
 			{/* education section */}
 			<Flex align="center" justify="space-between" mt={32} mb={8}>
 				<Text size="22px">Education</Text>
-				<Button onClick={addEducation}>Add</Button>
+				<Button onClick={addEducation}>
+					<IconPlus />
+				</Button>
 			</Flex>
 			<Divider />
 			{form.values?.education?.map((_, index) => (
@@ -241,7 +266,9 @@ export default function CVForm() {
 			{/* professional experience section */}
 			<Flex align="center" justify="space-between" mt={32} mb={8}>
 				<Text size="22px">Professional Experiences</Text>
-				<Button onClick={addProfessionalExp}>Add</Button>
+				<Button onClick={addProfessionalExp}>
+					<IconPlus />
+				</Button>
 			</Flex>
 			<Divider />
 			{form.values?.professionalExp?.map((_, index) => (
@@ -276,7 +303,10 @@ export default function CVForm() {
 			</Stack>
 
 			<Group justify="flex-end" mt="md">
-				<Button type="submit">Submit</Button>
+				<PreviewModal />
+				<Button bg="teal" type="submit">
+					Save
+				</Button>
 			</Group>
 		</form>
 	);

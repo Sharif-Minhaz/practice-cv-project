@@ -4,21 +4,27 @@ import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 
 export default function ImageDropzone({ form }) {
-	const [files, setFiles] = useState([]);
+	const [file, setFile] = useState(null);
 
-	const previews = files.map((file, index) => {
-		const imageUrl = URL.createObjectURL(file);
-		return <Image key={index} src={imageUrl} onLoad={() => URL.revokeObjectURL(imageUrl)} />;
-	});
+	// Generate a preview URL if a file exists
+	const previews = file ? (
+		<Image
+			src={URL.createObjectURL(file)}
+			alt="Profile Preview"
+			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))} // Revoke the URL to free memory
+		/>
+	) : null;
 
 	const handleSetImage = (files) => {
-		console.log(files);
-		setFiles(files);
-		form.setFieldValue("profileImage", URL.createObjectURL(files[0]));
+		// Set the file to state and update the form
+		setFile(files[0]);
+		form.setFieldValue("profileImage", files[0]);
 	};
 
 	const eraseImage = () => {
-		setFiles([]);
+		// Clear the file and reset the form field
+		setFile(null);
+		form.setFieldValue("profileImage", null);
 	};
 
 	return (
@@ -26,7 +32,7 @@ export default function ImageDropzone({ form }) {
 			<Box mb={2} style={{ fontSize: "15px" }}>
 				Upload profile image
 			</Box>
-			{!previews.length ? (
+			{!file ? (
 				<Dropzone
 					onDrop={handleSetImage}
 					onReject={(files) => console.log("rejected files", files)}
@@ -94,8 +100,8 @@ export default function ImageDropzone({ form }) {
 						<Box pos="absolute" top={1} right={1}>
 							<IconX
 								style={{
-									width: rem(52),
-									height: rem(52),
+									width: rem(32),
+									height: rem(32),
 									color: "var(--mantine-color-red-6)",
 								}}
 								cursor="pointer"

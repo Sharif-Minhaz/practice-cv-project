@@ -31,7 +31,7 @@ const RichTextEditorComponent = ({ value, onChange, placeholder }) => {
 	});
 
 	return (
-		<RichTextEditor editor={editor} mt={-10}>
+		<RichTextEditor editor={editor} mt={-10} mih={150}>
 			<RichTextEditor.Toolbar>
 				<RichTextEditor.ControlsGroup>
 					<RichTextEditor.Bold />

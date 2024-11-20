@@ -1,5 +1,6 @@
 import { Box, Button, Grid, TextInput } from "@mantine/core";
 import RichTextEditorComponent from "./RichTextEditorComponent";
+import { IconTrash } from "@tabler/icons-react";
 
 export default function ProfessionalExperience({ removeProfExp, form, index }) {
 	const handleRoleChange = (value) => {
@@ -45,7 +46,7 @@ export default function ProfessionalExperience({ removeProfExp, form, index }) {
 			{index !== 0 && (
 				<Grid.Col span={1}>
 					<Button bg="red" onClick={() => removeProfExp(index)}>
-						Del
+						<IconTrash />
 					</Button>
 				</Grid.Col>
 			)}
