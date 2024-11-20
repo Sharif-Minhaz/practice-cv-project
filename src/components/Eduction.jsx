@@ -15,15 +15,15 @@ export default function Eduction({ form, removeEducation, index }) {
 				<TextInput
 					withAsterisk
 					label="Duration"
-					placeholder="1-2"
+					placeholder="2001-2005"
 					{...form.getInputProps(`education.${index}.duration`)}
 				/>
 			</Grid.Col>
 			<Grid.Col span={3}>
 				<TextInput
 					withAsterisk
-					label="Course Title"
-					placeholder="Course ABC"
+					label="Subject Title"
+					placeholder="SWE"
 					{...form.getInputProps(`education.${index}.title`)}
 				/>
 			</Grid.Col>

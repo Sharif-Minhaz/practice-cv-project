@@ -3,7 +3,7 @@ import { Text, Image, SimpleGrid, Group, rem, Box } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 
-export default function ImageDropzone() {
+export default function ImageDropzone({ form }) {
 	const [files, setFiles] = useState([]);
 
 	const previews = files.map((file, index) => {
@@ -14,6 +14,7 @@ export default function ImageDropzone() {
 	const handleSetImage = (files) => {
 		console.log(files);
 		setFiles(files);
+		form.setFieldValue("profileImage", URL.createObjectURL(files[0]));
 	};
 
 	const eraseImage = () => {

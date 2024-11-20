@@ -3,12 +3,10 @@ import { useForm } from "@mantine/form";
 import ImageDropzone from "./ImageDropzone";
 import { IMaskInput } from "react-imask";
 import RichTextEditorComponent from "./RichTextEditorComponent";
-import { useRef } from "react";
 import Eduction from "./Eduction";
 import ProfessionalExperience from "./ProfessionalExperience";
 
 export default function CVForm() {
-	const richTextRef = useRef();
 	const form = useForm({
 		mode: "uncontrolled",
 		initialValues: {
@@ -24,8 +22,8 @@ export default function CVForm() {
 			education: [{ orgName: "", duration: "", title: "", grade: 0 }],
 			technicalSkills: "",
 			professionalExp: [{ orgName: "", duration: "", designation: "", role: "" }],
-			portfolio: "",
-			languages: "",
+			// portfolio: "",
+			// languages: "",
 		},
 
 		validate: {
@@ -56,14 +54,14 @@ export default function CVForm() {
 				values.every((edu) => edu.orgName.trim() && edu.title.trim())
 					? null
 					: "Education fields are required",
-			// technicalSkills: (value) =>
-			// 	value.trim().length > 0 ? null : "Technical skills are required",
-			// professionalExp: (values) =>
-			// 	values.every((exp) =>
-			// 		exp.orgName.trim() && exp.designation.trim() && exp.role.trim() ? true : false
-			// 	)
-			// 		? null
-			// 		: "All professional experience fields are required",
+			technicalSkills: (value) =>
+				value.trim().length > 0 ? null : "Technical skills are required",
+			professionalExp: (values) =>
+				values.every((exp) =>
+					exp.orgName.trim() && exp.designation.trim() && exp.role.trim() ? true : false
+				)
+					? null
+					: "All professional experience fields are required",
 			// portfolio: (values) =>
 			// 	values.every((item) =>
 			// 		item.title.trim() && item.technologies.trim() ? true : false
@@ -74,6 +72,7 @@ export default function CVForm() {
 		},
 	});
 
+	// add new education section
 	const addEducation = () => {
 		form.insertListItem("education", { orgName: "", duration: "", title: "", grade: "" });
 	};
@@ -83,27 +82,43 @@ export default function CVForm() {
 		form.removeListItem("education", index);
 	};
 
+	// add new professional experience
+	const addProfessionalExp = () => {
+		form.insertListItem("professionalExp", {
+			orgName: "",
+			duration: "",
+			designation: "",
+			role: "",
+		});
+	};
+
+	// remove professional experience
+	const removeProfessionalExp = (index) => {
+		form.removeListItem("professionalExp", index);
+	};
+
+	// global form submission handler
 	const handleSubmit = (values) => {
 		console.log(values);
 	};
 
+	// handle summary rich text editor
 	const handleSummaryChange = (value) => {
 		form.setFieldValue("summary", value);
-		console.log(value);
+	};
 
-		if (richTextRef.current) {
-			const content = richTextRef.current.innerHTML;
-			console.log("Extracted HTML:", content);
-		}
+	// handle technical skills handler
+	const handleTechnicalSkillsChange = (value) => {
+		form.setFieldValue("technicalSkills", value);
 	};
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)}>
-			<ImageDropzone />
+			<ImageDropzone form={form} />
 			<Divider mb={4} mt={14} />
 			<Grid>
 				{/* full name field */}
-				<Grid.Col span={6}>
+				<Grid.Col span={12}>
 					<TextInput
 						withAsterisk
 						label="Full Name"
@@ -111,6 +126,17 @@ export default function CVForm() {
 						key={form.key("fname")}
 						mt={8}
 						{...form.getInputProps("fname")}
+					/>
+				</Grid.Col>
+				{/* Designation field */}
+				<Grid.Col span={6}>
+					<TextInput
+						withAsterisk
+						label="Your Designation"
+						placeholder="designation"
+						key={form.key("designation")}
+						mt={8}
+						{...form.getInputProps("designation")}
 					/>
 				</Grid.Col>
 				{/* email address field */}
@@ -132,7 +158,7 @@ export default function CVForm() {
 						component={IMaskInput}
 						withAsterisk
 						label="Your Phone number"
-						mask="+88 00000-000000"
+						mask="01000000000"
 						placeholder="Your phone"
 						mt={8}
 						{...form.getInputProps("mobile")}
@@ -192,8 +218,31 @@ export default function CVForm() {
 				<Eduction removeEducation={removeEducation} index={index} form={form} key={index} />
 			))}
 
+			{/* technical skills section */}
+			<Stack mt={20}>
+				<Box style={{ fontSize: "22px" }}>Technical Skills</Box>
+				<Divider mb={10} />
+				<RichTextEditorComponent
+					value={form.values.technicalSkills}
+					onChange={handleTechnicalSkillsChange}
+					placeholder="Enter your technical skills"
+				/>
+			</Stack>
+
 			{/* professional experience section */}
-			<ProfessionalExperience />
+			<Flex align="center" justify="space-between" mt={32} mb={8}>
+				<Text size="22px">Professional Experiences</Text>
+				<Button onClick={addProfessionalExp}>Add</Button>
+			</Flex>
+			<Divider />
+			{form.values?.professionalExp?.map((_, index) => (
+				<ProfessionalExperience
+					removeProfExp={removeProfessionalExp}
+					index={index}
+					form={form}
+					key={index}
+				/>
+			))}
 
 			<Group justify="flex-end" mt="md">
 				<Button type="submit">Submit</Button>
