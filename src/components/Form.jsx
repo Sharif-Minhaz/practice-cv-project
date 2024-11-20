@@ -13,17 +13,17 @@ export default function CVForm() {
 			profileImage: "",
 			fname: "",
 			designation: "",
-			email: "",
+			email: "minhaz.rbs@gmail.com",
 			mobile: "",
-			github: "",
-			linkedIn: "",
-			website: "",
+			github: "https://github.com/Sharif-Minhaz",
+			linkedIn: "https://www.linkedin.com/in/minhaz-sharif-614724205",
+			website: "https://github.com/Sharif-Minhaz",
 			summary: "",
 			education: [{ orgName: "", duration: "", title: "", grade: 0 }],
 			technicalSkills: "",
 			professionalExp: [{ orgName: "", duration: "", designation: "", role: "" }],
-			// portfolio: "",
-			// languages: "",
+			portfolio: "",
+			languages: "",
 		},
 
 		validate: {
@@ -62,13 +62,10 @@ export default function CVForm() {
 				)
 					? null
 					: "All professional experience fields are required",
-			// portfolio: (values) =>
-			// 	values.every((item) =>
-			// 		item.title.trim() && item.technologies.trim() ? true : false
-			// 	)
-			// 		? null
-			// 		: "Portfolio fields are required",
-			// languages: (value) => (value.trim().length > 0 ? null : "Languages are required"),
+			portfolio: (values) =>
+				values.trim().length > 0 ? null : "Portfolio section is required",
+
+			languages: (value) => (value.trim().length > 0 ? null : "Languages are required"),
 		},
 	});
 
@@ -110,6 +107,16 @@ export default function CVForm() {
 	// handle technical skills handler
 	const handleTechnicalSkillsChange = (value) => {
 		form.setFieldValue("technicalSkills", value);
+	};
+
+	// handle portfolio
+	const handlePortfolioChange = (value) => {
+		form.setFieldValue("portfolio", value);
+	};
+
+	// handle languages changes
+	const handleLanguageChange = (value) => {
+		form.setFieldValue("languages", value);
 	};
 
 	return (
@@ -171,6 +178,7 @@ export default function CVForm() {
 						label="Your github link"
 						key={form.key("github")}
 						mt={8}
+						placeholder="https://github.com/Sharif-Minhaz"
 						{...form.getInputProps("github")}
 					/>
 				</Grid.Col>
@@ -184,6 +192,7 @@ export default function CVForm() {
 						label="Your linked in link"
 						key={form.key("linkedIn")}
 						mt={8}
+						placeholder="https://www.linkedin.com/in/minhaz-sharif-614724205"
 						{...form.getInputProps("linkedIn")}
 					/>
 				</Grid.Col>
@@ -243,6 +252,28 @@ export default function CVForm() {
 					key={index}
 				/>
 			))}
+
+			{/* Portfolio section */}
+			<Stack mt={32} mb={8}>
+				<Text size="22px">Portfolio Section</Text>
+				<Divider />
+				<RichTextEditorComponent
+					value={form.values.portfolio}
+					onChange={handlePortfolioChange}
+					placeholder="Enter your portfolio section"
+				/>
+			</Stack>
+
+			{/* Language section */}
+			<Stack mt={32} mb={8}>
+				<Text size="22px">Include Languages</Text>
+				<Divider />
+				<RichTextEditorComponent
+					value={form.values.languages}
+					onChange={handleLanguageChange}
+					placeholder="Enter your preferred language"
+				/>
+			</Stack>
 
 			<Group justify="flex-end" mt="md">
 				<Button type="submit">Submit</Button>
